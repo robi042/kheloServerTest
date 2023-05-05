@@ -7052,7 +7052,7 @@ controller.player.view_ludo_image = function (req, res) {
                         entry.forEach(function(each_entry){
                             if(each_entry.metadata.image){
                                 let temp = {
-                                    image_link:'https://testv2.khelo.live/uploads/' + each_entry.metadata.image,
+                                    image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/uploads/' + each_entry.metadata.image,
                                     uploaded_by : each_entry.metadata.image_uploaded_by
                                 }
                                 image_links.push(temp)
@@ -7748,7 +7748,7 @@ controller.player.show_slider_list = function(req, res){
                                 title:each_slider.metadata.title,
                                 link:each_slider.metadata.link,
                                 status:each_slider.metadata.status,
-                                image_link:'https://testv2.khelo.live/sliders/' + each_slider.metadata.image
+                                image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/sliders/' + each_slider.metadata.image
                             }
                             slider_list.push(temp_slider)
                         })
@@ -7793,7 +7793,7 @@ controller.player.show_slider_list = function(req, res){
                                 slider_id: each_slider.id,
                                 title:each_slider.metadata.title,
                                 link:each_slider.metadata.link,
-                                image_link:'https://testv2.khelo.live/sliders/' + each_slider.metadata.image
+                                image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/sliders/' + each_slider.metadata.image
                             }
                             slider_list.push(temp_slider)
                         })
@@ -7877,7 +7877,7 @@ controller.player.pop_up_show = function(req, res){
                         if(pop_up.metadata.type == 'image'){
                             temp.hasImage = true,
                             temp.hasText = false,
-                            temp.image_link = 'https://testv2.khelo.live/popups/' + pop_up.metadata.image
+                            temp.image_link = 'http://khelo.ap-south-1.elasticbeanstalk.com/popups/' + pop_up.metadata.image
                         }
                         h.render_xhr(req, res, {e:0, m:temp})
                     })
@@ -8905,7 +8905,7 @@ controller.admin.get_result_ludo_match = function(req, res){
                                 host_app:each_match.metadata.host_app
                             }
                             if(each_match.metadata.image){
-                                temp_match.image_link = 'https://testv2.khelo.live/uploads/' + each_match.metadata.image
+                                temp_match.image_link = 'http://khelo.ap-south-1.elasticbeanstalk.com/uploads/' + each_match.metadata.image
                             };
                             
                             if(each_match.metadata.image_uploaded_by){
@@ -11589,7 +11589,7 @@ controller.admin.show_slider_list = function(req, res){
                                 title:each_slider.metadata.title,
                                 link:each_slider.metadata.link,
                                 status:each_slider.metadata.status,
-                                image_link:'https://testv2.khelo.live/sliders/' + each_slider.metadata.image
+                                image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/sliders/' + each_slider.metadata.image
                             }
                             slider_list.push(temp_slider)
                         })
@@ -12512,7 +12512,7 @@ controller.admin.send_iamge_notification_to_all = function (req, res) {
                         }
                         else {
                             let topic = 'NotificationForAllPlayers'
-                            let image_link = 'https://testv2.khelo.live/notifications/notification.png'
+                            let image_link = 'http://khelo.ap-south-1.elasticbeanstalk.com/notifications/notification.png'
                             if (input.title && input.message) {
                                 h.send_image_notification(input.title, input.message, topic, image_link)
                                 h.render_xhr(req, res, { e: 0 })
@@ -12981,7 +12981,7 @@ controller.admin.show_ludo_image = function (req, res) {
                        entry.forEach(function(each_entry){
                            if(each_entry.metadata.image){
                                let temp = {
-                                   image_link:'https://testv2.khelo.live/uploads/' + each_entry.metadata.image,
+                                   image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/uploads/' + each_entry.metadata.image,
                                    uploaded_by : each_entry.metadata.image_uploaded_by
                                }
                                image_links.push(temp)
