@@ -1,7 +1,9 @@
 const qs = require('querystring');
+const dotenv = require('dotenv');
 var fs = require('fs');
 const h = require('./helper').h;
 const connection = require('./connections').connection;
+dotenv.config();
 
 
 
