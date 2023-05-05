@@ -19,12 +19,12 @@ h.jwt = require('jsonwebtoken');
 h.moment = require('moment');
 h.Sequelize = Sequelize;
 h.dataUriToBuffer = require('data-uri-to-buffer');
-AWS.config.update({
-    accessKeyId: 'AKIA6BPXYW3UURFBFBFS',
-    secretAccessKey: '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',
+const s3Params = {
+    accessKeyId: 'AKIA6BPXYW3UW455KZ5R',
+    secretAccessKey: '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',
     region: 'ap-south-1'
-});
-h.s3 = new AWS.S3();
+}
+h.s3 = new AWS.S3(s3Params);
 
 
 

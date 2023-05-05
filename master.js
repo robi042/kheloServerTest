@@ -6930,28 +6930,33 @@ controller.player.ludo_upload_image = function(req, res){
                         }
                     }).then(match =>{
                         let metadata = match.metadata
-                        metadata.image = match.id+'.png'
+                        metadata.image = match.id+'.jpg'
                         metadata.image_uploaded_by = user.metadata.user_name
                         var img = input.image
-                        // strip off the data: url prefix to get just the base64-encoded bytes
                         var data = img.replace(/^data:image\/\w+;base64,/, "");
                         var buf = Buffer.from(data, 'base64');
-                        fs.writeFile(`./uploads/${match.id}.png`, buf, function(err) {
-                            if (err){
-                                console.log(err)
-                                h.render_xhr(req, res, {e:1})
+                        // strip off the data: url prefix to get just the base64-encoded bytes
+                        h.s3.putObject({
+                            Bucket: 'uploadssssss',
+                            Key: `${match.id}.jpg`,
+                            Body: buf,
+                            ACL: 'public-read',
+                            ContentType: 'image/jpeg'
+                        },function (resp) {
+                            if(resp){
+                                console.log("Error uploading image");
+                                console.log(resp);
                             }
-                            else{
-                                match.update({metadata:metadata}).then(updated =>{
-                                    if(updated){
-                                        h.render_xhr(req, res, {e:0})
-                                    }
-                                    else{
-                                        h.render_xhr(req, res, {e:2})
-                                    }
-                                })
-                            }
+                            match.update({metadata:metadata}).then(updated =>{
+                                if(updated){
+                                    h.render_xhr(req, res, {e:0, m:'Successfully added!'})
+                                }
+                                else{
+                                    h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
+                                }
+                            })
                         });
+
                     })
                 }
                 else{
@@ -6990,27 +6995,29 @@ controller.player.new_ludo_upload_image = function(req, res){
                         }
                         else{
                             let metadata = match.metadata
-                            metadata.image = input.match_id+'_'+user.id+'.png'
+                            metadata.image = input.match_id+'_'+user.id+'.jpg'
                             metadata.image_uploaded_by = user.metadata.user_name
                             var img = input.image
                             // strip off the data: url prefix to get just the base64-encoded bytes
-                            var data = img.replace(/^data:image\/\w+;base64,/, "");
-                            var buf = Buffer.from(data, 'base64');
-                            fs.writeFile(`./uploads/${input.match_id+'_'+user.id}.png`, buf, function(err) {
-                                if (err){
-                                    console.log(err)
-                                    h.render_xhr(req, res, {e:1})
+                            h.s3.putObject({
+                                Bucket: 'uploadssssss',
+                                Key: `${input.match_id+'_'+user.id}.jpg`,
+                                Body: h.dataUriToBuffer('data:text/plain;base64,' + img),
+                                ACL: 'public-read',
+                                ContentType: 'image/jpeg'
+                            },function (resp) {
+                                if(resp){
+                                    console.log("Error uploading image");
+                                    console.log(resp);
                                 }
-                                else{
-                                    match.update({metadata:metadata}).then(updated =>{
-                                        if(updated){
-                                            h.render_xhr(req, res, {e:0})
-                                        }
-                                        else{
-                                            h.render_xhr(req, res, {e:2})
-                                        }
-                                    })
-                                }
+                                match.update({metadata:metadata}).then(updated =>{
+                                    if(updated){
+                                        h.render_xhr(req, res, {e:0, m:'Successfully added!'})
+                                    }
+                                    else{
+                                        h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
+                                    }
+                                })
                             });
                         }
                             }
@@ -7052,7 +7059,7 @@ controller.player.view_ludo_image = function (req, res) {
                         entry.forEach(function(each_entry){
                             if(each_entry.metadata.image){
                                 let temp = {
-                                    image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/uploads/' + each_entry.metadata.image,
+                                    image_link:'https://uploadssssss.s3.ap-south-1.amazonaws.com/' + each_entry.metadata.image,
                                     uploaded_by : each_entry.metadata.image_uploaded_by
                                 }
                                 image_links.push(temp)
@@ -7748,7 +7755,7 @@ controller.player.show_slider_list = function(req, res){
                                 title:each_slider.metadata.title,
                                 link:each_slider.metadata.link,
                                 status:each_slider.metadata.status,
-                                image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/sliders/' + each_slider.metadata.image
+                                image_link:'https://sliderss.s3.ap-south-1.amazonaws.com/' + each_slider.metadata.image
                             }
                             slider_list.push(temp_slider)
                         })
@@ -7793,7 +7800,7 @@ controller.player.show_slider_list = function(req, res){
                                 slider_id: each_slider.id,
                                 title:each_slider.metadata.title,
                                 link:each_slider.metadata.link,
-                                image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/sliders/' + each_slider.metadata.image
+                                image_link:'https://sliderss.s3.ap-south-1.amazonaws.com/' + each_slider.metadata.image
                             }
                             slider_list.push(temp_slider)
                         })
@@ -7877,7 +7884,7 @@ controller.player.pop_up_show = function(req, res){
                         if(pop_up.metadata.type == 'image'){
                             temp.hasImage = true,
                             temp.hasText = false,
-                            temp.image_link = 'http://khelo.ap-south-1.elasticbeanstalk.com/popups/' + pop_up.metadata.image
+                            temp.image_link = 'https://popupss.s3.ap-south-1.amazonaws.com/' + pop_up.metadata.image
                         }
                         h.render_xhr(req, res, {e:0, m:temp})
                     })
@@ -8905,7 +8912,7 @@ controller.admin.get_result_ludo_match = function(req, res){
                                 host_app:each_match.metadata.host_app
                             }
                             if(each_match.metadata.image){
-                                temp_match.image_link = 'http://khelo.ap-south-1.elasticbeanstalk.com/uploads/' + each_match.metadata.image
+                                temp_match.image_link = 'https://uploadssssss.s3.ap-south-1.amazonaws.com/' + each_match.metadata.image
                             };
                             
                             if(each_match.metadata.image_uploaded_by){
@@ -11525,12 +11532,14 @@ controller.admin.add_new_slider = function(req, res){
                         connection.db.Slider.create(slider_info).then(created =>{
                             if(created){
                                 let metadata = created.metadata
-                                metadata.image = created.id+'.jpg'
+                                metadata.image = created.id+'.png'
                                 var img = input.image
+                                var data = img.replace(/^data:image\/\w+;base64,/, "");
+                                var buf = Buffer.from(data, 'base64');
                                 h.s3.putObject({
                                     Bucket: 'sliderss',
-                                    Key: `${created.id}.jpg`,
-                                    Body: h.dataUriToBuffer('data:text/plain;base64,' + img),
+                                    Key: `${created.id}.png`,
+                                    Body: buf,
                                     ACL: 'public-read',
                                     ContentType: 'image/jpeg'
                                 },function (resp) {
@@ -11610,10 +11619,11 @@ controller.admin.show_slider_list = function(req, res){
                                 title:each_slider.metadata.title,
                                 link:each_slider.metadata.link,
                                 status:each_slider.metadata.status,
-                                image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/sliders/' + each_slider.metadata.image
+                                image_link:'https://sliderss.s3.ap-south-1.amazonaws.com/' + each_slider.metadata.image
                             }
                             slider_list.push(temp_slider)
                         })
+                        console.log(slider_list)
                         h.render_xhr(req, res, {e:0, m:slider_list})
                     })
                 }
@@ -11898,25 +11908,30 @@ controller.admin.add_new_pop_up = function(req, res){
                         connection.db.PopUp.create(popup_info).then(created =>{
                             if(created){
                                 let metadata = created.metadata
-                                metadata.image = created.id+'.png'
+                                metadata.image = created.id+'.jpg'
                                 var img = input.image
-                                // strip off the data: url prefix to get just the base64-encoded bytes
                                 var data = img.replace(/^data:image\/\w+;base64,/, "");
                                 var buf = Buffer.from(data, 'base64');
-                                fs.writeFile(`./popups/${created.id}.png`, buf, function(err) {
-                                    if (err){
-                                        h.render_xhr(req, res, {e:3, m:err})
+                                // strip off the data: url prefix to get just the base64-encoded bytes
+                                h.s3.putObject({
+                                    Bucket: 'popupss',
+                                    Key: `${created.id}.jpg`,
+                                    Body: buf,
+                                    ACL: 'public-read',
+                                    ContentType: 'image/jpeg'
+                                },function (resp) {
+                                    if(resp){
+                                        console.log("Error uploading image");
+                                        console.log(resp);
                                     }
-                                    else{
-                                        created.update({metadata:metadata}).then(updated =>{
-                                            if(updated){
-                                                h.render_xhr(req, res, {e:0, m:'Successfully added!'})
-                                            }
-                                            else{
-                                                h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
-                                            }
-                                        })
-                                    }
+                                    match.update({metadata:metadata}).then(updated =>{
+                                        if(updated){
+                                            h.render_xhr(req, res, {e:0, m:'Successfully added!'})
+                                        }
+                                        else{
+                                            h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
+                                        }
+                                    })
                                 });
                             }
                         })
@@ -12527,13 +12542,18 @@ controller.admin.send_iamge_notification_to_all = function (req, res) {
                     var img = input.image
                     var data = img.replace(/^data:image\/\w+;base64,/, "");
                     var buf = Buffer.from(data, 'base64');
-                    fs.writeFile(`./notifications/notification.png`, buf, function (err) {
-                        if (err) {
-                            h.render_xhr(req, res, { e: 3, m: err })
+                    h.s3.putObject({
+                        Bucket: 'notificationss',
+                        Key: `notification.jpg`,
+                        Body: buf,
+                        ACL: 'public-read',
+                        ContentType: 'image/jpeg'
+                    },function (resp) {
+                        if(resp){
+                            console.log("Error uploading image");
+                            console.log(resp);
                         }
-                        else {
-                            let topic = 'NotificationForAllPlayers'
-                            let image_link = 'http://khelo.ap-south-1.elasticbeanstalk.com/notifications/notification.png'
+                        else{
                             if (input.title && input.message) {
                                 h.send_image_notification(input.title, input.message, topic, image_link)
                                 h.render_xhr(req, res, { e: 0 })
@@ -13002,7 +13022,7 @@ controller.admin.show_ludo_image = function (req, res) {
                        entry.forEach(function(each_entry){
                            if(each_entry.metadata.image){
                                let temp = {
-                                   image_link:'http://khelo.ap-south-1.elasticbeanstalk.com/uploads/' + each_entry.metadata.image,
+                                   image_link:'https://uploadssssss.s3.ap-south-1.amazonaws.com/' + each_entry.metadata.image,
                                    uploaded_by : each_entry.metadata.image_uploaded_by
                                }
                                image_links.push(temp)
