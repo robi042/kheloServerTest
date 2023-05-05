@@ -1,8 +1,6 @@
 const qs = require('querystring');
-const dotenv = require('dotenv');
 const h = require('../helper').h;
 const connection = require('../connections').connection;
-dotenv.config();
 
 var add_money ={}
 

@@ -7,9 +7,7 @@ const url = require('url');
 const admin = require("firebase-admin");
 
 var nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
 var serviceAccount = require('./khelo-5c666-firebase-adminsdk-01asf-4e4df32e46.json');
-dotenv.config();
 
 let h = {};
 //h.argon2 = require('argon2');

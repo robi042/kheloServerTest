@@ -1,5 +1,4 @@
 console.log(" ############################ Khelo SERVER BOOT ############################ ");
-const url = require('url');
 var compression = require('compression')
 const express = require('express');
 const path = require('path');
@@ -17,7 +16,6 @@ const h = require('./helper').h;
 
 const app = express();
 app.use(compression())
-dotenv.config();
 app.use(helmet());
 app.use(useragent.express());
 app.use(timeout('1000s'));
