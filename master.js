@@ -11525,26 +11525,47 @@ controller.admin.add_new_slider = function(req, res){
                         connection.db.Slider.create(slider_info).then(created =>{
                             if(created){
                                 let metadata = created.metadata
-                                metadata.image = created.id+'.png'
+                                metadata.image = created.id+'.jpg'
                                 var img = input.image
-                                // strip off the data: url prefix to get just the base64-encoded bytes
-                                var data = img.replace(/^data:image\/\w+;base64,/, "");
-                                var buf = Buffer.from(data, 'base64');
-                                fs.writeFile(`./sliders/${created.id}.png`, buf, function(err) {
-                                    if (err){
-                                        h.render_xhr(req, res, {e:3, m:err})
+                                h.s3.putObject({
+                                    Bucket: 'sliderss',
+                                    Key: `${created.id}.jpg`,
+                                    Body: h.dataUriToBuffer('data:text/plain;base64,' + img),
+                                    ACL: 'public-read',
+                                    ContentType: 'image/jpeg'
+                                },function (resp) {
+                                    if(resp){
+                                        console.log("Error uploading image");
+                                        console.log(resp);
                                     }
-                                    else{
-                                        created.update({metadata:metadata}).then(updated =>{
-                                            if(updated){
-                                                h.render_xhr(req, res, {e:0, m:'Successfully added!'})
-                                            }
-                                            else{
-                                                h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
-                                            }
-                                        })
-                                    }
+                                    created.update({metadata:metadata}).then(updated =>{
+                                        if(updated){
+                                            h.render_xhr(req, res, {e:0, m:'Successfully added!'})
+                                        }
+                                        else{
+                                            h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
+                                        }
+                                    })
                                 });
+
+                                // strip off the data: url prefix to get just the base64-encoded bytes
+                                // var data = img.replace(/^data:image\/\w+;base64,/, "");
+                                // var buf = Buffer.from(data, 'base64');
+                                // fs.writeFile(`./sliders/${created.id}.png`, buf, function(err) {
+                                //     if (err){
+                                //         h.render_xhr(req, res, {e:3, m:err})
+                                //     }
+                                //     else{
+                                //         created.update({metadata:metadata}).then(updated =>{
+                                //             if(updated){
+                                //                 h.render_xhr(req, res, {e:0, m:'Successfully added!'})
+                                //             }
+                                //             else{
+                                //                 h.render_xhr(req, res, {e:4, m:'Something went wrong!'})
+                                //             }
+                                //         })
+                                //     }
+                                // });
                             }
                         })
                     }

@@ -2,7 +2,7 @@ const https = require('https');
 const http = require('http');
 const request = require('request');
 const Sequelize = require('sequelize');
-
+const AWS = require('aws-sdk');
 const url = require('url');
 const admin = require("firebase-admin");
 
@@ -19,6 +19,13 @@ h.jwt = require('jsonwebtoken');
 h.moment = require('moment');
 h.Sequelize = Sequelize;
 h.dataUriToBuffer = require('data-uri-to-buffer');
+AWS.config.update({
+    accessKeyId: 'AKIA6BPXYW3UURFBFBFS',
+    secretAccessKey: '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',
+    region: 'ap-south-1'
+});
+h.s3 = new AWS.S3();
+
 
 
 admin.initializeApp({
