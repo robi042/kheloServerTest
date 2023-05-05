@@ -92,7 +92,7 @@ app.get('/play-store/terms-and-conditions', (req, res) => {
 app.use('/api', require('./router'))
 app.use('/sub-admin/add-money/v1/api', add_money_sub_admin)
 
-let port = process.env.new_port || 5000;
+let port = process.env.port || 5000;
 app.listen(port,()=>{
   console.log(`Khelo are listening on port ${port}`);
 });
