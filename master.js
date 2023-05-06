@@ -11943,14 +11943,14 @@ controller.admin.add_new_pop_up = function(req, res){
                         connection.db.PopUp.create(popup_info).then(created =>{
                             if(created){
                                 let metadata = created.metadata
-                                metadata.image = created.id+'.jpg'
+                                metadata.image = created.id+'.png'
                                 var img = input.image
                                 var data = img.replace(/^data:image\/\w+;base64,/, "");
                                 var buf = Buffer.from(data, 'base64');
                                 // strip off the data: url prefix to get just the base64-encoded bytes
                                 h.s3.putObject({
                                     Bucket: 'popupss',
-                                    Key: `${created.id}.jpg`,
+                                    Key: `${created.id}.png`,
                                     Body: buf,
                                     ACL: 'public-read',
                                     ContentType: 'image/jpeg'
@@ -11959,7 +11959,7 @@ controller.admin.add_new_pop_up = function(req, res){
                                         console.log("Error uploading image");
                                         console.log(resp);
                                     }
-                                    match.update({metadata:metadata}).then(updated =>{
+                                    created.update({metadata:metadata}).then(updated =>{
                                         if(updated){
                                             h.render_xhr(req, res, {e:0, m:'Successfully added!'})
                                         }
