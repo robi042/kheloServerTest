@@ -1870,7 +1870,7 @@ controller.player.test = function(req, res){
 controller.player.update_app = function(req, res){
     try{
         let update = {
-            khelo: "62",
+            khelo: "63",
             link: "https://app-uploads-apk.s3.ap-south-1.amazonaws.com/khelo.apk",
             id: "1"
         }
