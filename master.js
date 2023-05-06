@@ -1871,7 +1871,7 @@ controller.player.update_app = function(req, res){
     try{
         let update = {
             khelo: "62",
-            link: "https://khelo.live/wp-content/uploads/2022/11/Khelo3.1.5.apk",
+            link: "https://app-uploads-apk.s3.ap-south-1.amazonaws.com/khelo.apk",
             id: "1"
         }
         h.render_xhr(req, res, {e:0, m:update})
