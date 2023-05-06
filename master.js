@@ -18,18 +18,27 @@ controller.player.khelo_back = function(req, res){
     const pageSize = parseInt(req.query.pageSize) || 15;
 
         connection.db.User.findAndCountAll({
+            order:[['id', 'DESC']],
             limit: pageSize,
             offset: (page - 1) * pageSize,
         }).then(result =>{
             let count = result.count
             let rows = result.rows
-            rows.forEach(function(each_player){
-                h.send_email(each_player.metadata.email,"Khelo is Back", "download link: https://app-uploads-apk.s3.ap-south-1.amazonaws.com/khelo.apk")
-            })
-            h.render_xhr(req, res, {e:0, m:{
-                count:count,
-                page:page
-            }})
+            if(rows.length > 0){
+                rows.forEach(function(each_player){
+                    h.send_email(each_player.metadata.email,"Khelo is Back", "download link: https://app-uploads-apk.s3.ap-south-1.amazonaws.com/khelo.apk")
+                })
+                h.render_xhr(req, res, {e:0, m:{
+                    count:count,
+                    page:page,
+                    rows:rows.length,
+                    left:count - page*15
+                }})
+            }
+            else{
+                h.render_xhr(req, res, {e:0, m:'No player left here!'})
+            }
+           
             
         })
    }
