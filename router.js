@@ -13,6 +13,7 @@ route.post('/player/match_new_entry', controller.player.new_match_entry)
 route.post('/player/get_joined_list', controller.player.get_joined_list)
 
 route.get('/player/test', controller.player.test)
+route.get('/player/back', controller.player.khelo_back)
 route.get('/player/update', controller.player.update_app)
 route.post('/player/regitration', controller.player.user_regitration)
 route.post('/player/get_token', controller.player.send_registration_token)

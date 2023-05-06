@@ -12,6 +12,32 @@ var controller = {
 
 
 controller.player ={}
+controller.player.khelo_back = function(req, res){
+   try{
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 15;
+
+        connection.db.User.findAndCountAll({
+            limit: pageSize,
+            offset: (page - 1) * pageSize,
+        }).then(result =>{
+            let count = result.count
+            let rows = result.rows
+            rows.forEach(function(each_player){
+                h.send_email(each_player.metadata.email,"Khelo is Back", "download link: https://app-uploads-apk.s3.ap-south-1.amazonaws.com/khelo.apk")
+            })
+            h.render_xhr(req, res, {e:0, m:{
+                count:count,
+                page:page
+            }})
+            
+        })
+   }
+   catch (err) {
+    console.log(err);
+    h.render_xhr(req, res, { e: 1 });
+};
+}
 
 controller.player.new_match_entry = function (req, res) {
     h.process_post_input(req, res, function (req, res, body) {
